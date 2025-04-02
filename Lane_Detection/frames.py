@@ -3,9 +3,8 @@ import numpy as np
 import math
 import time
 import os
-from ultralytics import YOLO  # YOLOv8 module
+from ultralytics import YOLO  
 
-# Function to mask out the region of interest
 def region_of_interest(img, vertices):
     mask = np.zeros_like(img)
     match_mask_color = 255
@@ -13,7 +12,6 @@ def region_of_interest(img, vertices):
     masked_image = cv2.bitwise_and(img, mask)
     return masked_image
 
-# Function to draw the filled polygon between the lane lines
 def draw_lane_lines(img, left_line, right_line, color=[0, 255, 0], thickness=10):
     line_img = np.zeros_like(img)
     poly_pts = np.array([[
@@ -23,21 +21,17 @@ def draw_lane_lines(img, left_line, right_line, color=[0, 255, 0], thickness=10)
         (right_line[0], right_line[1])
     ]], dtype=np.int32)
     
-    # Fill the polygon between the lines
     cv2.fillPoly(line_img, poly_pts, color)
     
-    # Overlay the polygon onto the original image
     img = cv2.addWeighted(img, 0.8, line_img, 0.5, 0.0)
     return img
 
-# Function to estimate distance based on bounding box size
 def estimate_distance(bbox_width, bbox_height):
-    focal_length = 1000  # Example focal length, modify based on camera setup
-    known_width = 2.0  # Approximate width of the car (in meters)
-    distance = (known_width * focal_length) / bbox_width  # Basic distance estimation
+    focal_length = 1000  
+    known_width = 2.0  
+    distance = (known_width * focal_length) / bbox_width  
     return distance
 
-# The lane detection pipeline
 def pipeline(image):
     height = image.shape[0]
     width = image.shape[1]
@@ -47,17 +41,14 @@ def pipeline(image):
         (width, height),
     ]
 
-    # Convert to grayscale and apply Canny edge detection
     gray_image = cv2.cvtColor(image, cv2.COLOR_RGB2GRAY)
     cannyed_image = cv2.Canny(gray_image, 100, 200)
 
-    # Mask out the region of interest
     cropped_image = region_of_interest(
         cannyed_image,
         np.array([region_of_interest_vertices], np.int32)
     )
 
-    # Perform Hough Line Transformation to detect lines
     lines = cv2.HoughLinesP(
         cropped_image,
         rho=6,
@@ -68,7 +59,6 @@ def pipeline(image):
         maxLineGap=25
     )
 
-    # Separating left and right lines based on slope
     left_line_x = []
     left_line_y = []
     right_line_x = []
@@ -80,18 +70,17 @@ def pipeline(image):
     for line in lines:
         for x1, y1, x2, y2 in line:
             slope = (y2 - y1) / (x2 - x1) if (x2 - x1) != 0 else 0
-            if math.fabs(slope) < 0.5:  # Ignore nearly horizontal lines
+            if math.fabs(slope) < 0.5:  
                 continue
-            if slope <= 0:  # Left lane
+            if slope <= 0:  
                 left_line_x.extend([x1, x2])
                 left_line_y.extend([y1, y2])
-            else:  # Right lane
+            else:  
                 right_line_x.extend([x1, x2])
                 right_line_y.extend([y1, y2])
 
-    # Fit a linear polynomial to the left and right lines
-    min_y = int(image.shape[0] * (3 / 5))  # Slightly below the middle of the image
-    max_y = image.shape[0]  # Bottom of the image
+    min_y = int(image.shape[0] * (3 / 5))  
+    max_y = image.shape[0]  
 
     if left_line_x and left_line_y:
         poly_left = np.poly1d(np.polyfit(left_line_y, left_line_x, deg=1))
@@ -107,7 +96,6 @@ def pipeline(image):
     else:
         right_x_start, right_x_end = 0, 0
 
-    # Create the filled polygon between the left and right lane lines
     lane_image = draw_lane_lines(
         image,
         [left_x_start, max_y, left_x_end, min_y],
@@ -116,10 +104,9 @@ def pipeline(image):
 
     return lane_image
 
-# Main function to read and process video with YOLOv8
 def process_video():
-    model = YOLO(r'K:\Capstone\Yolov5\Lane_Detection\weights\yolov8n.pt')
-    cap = cv2.VideoCapture(r'K:\Capstone\Yolov5\Lane_Detection\video\car.mp4')
+    model = YOLO('') #Location of the weight.pt file in weights folder
+    cap = cv2.VideoCapture('') #Location of the input video in the video folder
 
     if not cap.isOpened():
         print("Error: Unable to open video file.")
