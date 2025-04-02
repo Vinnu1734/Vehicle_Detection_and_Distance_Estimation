@@ -1,5 +1,4 @@
 # Object_Detection_and_Distance_Estimation
-# Object Detection and Distance Estimation
 
 ## Cloning the Repository
 To clone this repository, run the following command:
