@@ -1,13 +1,13 @@
-# Object_Detection_and_Distance_Estimation
+# Vehicle_Detection_and_Distance_Estimation
 
 ## Cloning the Repository
 To clone this repository, run the following command:
 ```sh
-git clone https://github.com/Vinnu1734/Object_Detection_and_Distance_Estimation.git
+git clone https://github.com/Vinnu1734/Vehicle_Detection_and_Distance_Estimation.git
 ```
 ```sh
-cd Object_Detection_and_Distance_Estimation 
-cd Lane_Detection
+cd Vehicle_Detection_and_Distance_Estimation 
+cd Detection
 ```
 
 ## Installing Prerequisites
