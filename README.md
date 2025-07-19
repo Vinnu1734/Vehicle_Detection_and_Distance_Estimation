@@ -7,7 +7,7 @@ git clone https://github.com/Vinnu1734/Vehicle_Detection_and_Distance_Estimation
 ```
 ```sh
 cd Vehicle_Detection_and_Distance_Estimation 
-cd Detection
+cd Lane_Detection
 ```
 
 ## Installing Prerequisites
